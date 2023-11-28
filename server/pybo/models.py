@@ -1,4 +1,4 @@
-from pybo import db
+from server.pybo import db
 from datetime import datetime
 
 class Users(db.Model):

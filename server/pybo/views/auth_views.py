@@ -2,9 +2,9 @@ from flask import Blueprint, url_for, render_template, flash, request, session, 
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 
-from pybo import db
-from pybo.forms import UserCreateForm, UserLoginForm
-from pybo.models import Users
+from server.pybo import db
+from server.pybo.forms import UserCreateForm, UserLoginForm
+from server.pybo.models import Users
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -13,8 +13,13 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def signup():
     form = UserCreateForm()
     if request.method == 'POST' and form.validate_on_submit():
-        users = Users.query.filter_by(users_name=form.users_name.data).first()
-        if not users:
+        user_by_email = Users.query.filter_by(email=form.email.data).first()
+        user_by_nickname = Users.query.filter_by(nickname=form.nickname.data).first()
+        if user_by_email:
+            flash('이미 사용 중인 이메일입니다.')
+        elif user_by_nickname:
+            flash('이미 사용 중인 닉네임입니다.')
+        else:
             users = Users(
                 nickname=form.nickname.data,
                 users_name=form.users_name.data,
@@ -28,8 +33,6 @@ def signup():
             db.session.add(users)
             db.session.commit()
             return redirect(url_for('main.index'))
-        else:
-            flash('이미 존재하는 사용자입니다.')
     return render_template('auth/signup.html', form=form)
 
 # 로그인 폼

@@ -1,5 +1,5 @@
 @echo off
-cd c:/dev/Python/DMS
+cd C:\dev\Python\DMS\server
 
 call C:\Users\KOSA\anaconda3\envs\DMS\Lib\venv\scripts\nt\activate
 
